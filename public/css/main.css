@@ -1,0 +1,27 @@
+.starter-template {
+  text-align: center;
+}
+
+.mid {
+  margin: 0 auto;
+  max-width: 330px;
+}
+
+.input-box {
+  margin-bottom: 10px;
+}
+
+#map-canvas {
+  width: 80%;
+  height: 600px;
+  margin-right: auto;
+  margin-left: auto;
+  margin-top: 30px;
+  margin-bottom: 40px;
+}
+
+.add-location,
+.done-button {
+  margin-top: 5px;
+  margin-right: 10px;
+}
