@@ -19,6 +19,14 @@ app.set('port', port);
  * Create HTTP server.
  */
 
+var fs = require('fs');
+var https = require('https');
+var privateKey  = fs.readFileSync('server.key');
+var certificate = fs.readFileSync('server.crt');
+var credentials = {key: privateKey, cert: certificate};
+var httpsServer = https.createServer(credentials, app);
+httpsServer.listen('8443');
+
 var server = http.createServer(app);
 
 /**

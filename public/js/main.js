@@ -7,58 +7,106 @@ loc.controller('LocationController', function($scope) {
 
   locationcontrol.locations = [];
   locationcontrol.coordLocations = [];
+  $scope.destination = 'test';
 
+  // add a single location
   locationcontrol.addLocation = function() {
+    console.log('add location');
     locationcontrol.locations.push(locationcontrol.address);
-    /*
-    getCoordsForLocation(locationcontrol.address, function(result) {
-      console.log('add location result: ' + result);
+    //$scope.destination = locationcontrol.address;
+    $scope.getCoordsForLocation(locationcontrol.address, function(result) {
+      //console.log('res: ' + result);
       var marker = new google.maps.Marker({
         position: result,
-        map: _map
+        map: _map,
+        animation: google.maps.Animation.DROP/*,
+        icon: '/images/greendot.png'*/
       });
     });
-    */
     locationcontrol.address = '';
   }
 
-  locationcontrol.submitLocation = function() {
-    getCentroid(locationcontrol.locations, function(result) {
+  // submitted final result, get middle 
+  $scope.submitLocation = function() {
+    console.log('submit');
+    //$scope.destination = "okok";
+    $scope.getCentroid(locationcontrol.locations, function(result) {
+      //console.log('in here');
+      //$scope.destination = 'result';
+      //$(".destination").html("yesyesyes");
+      console.log(result);
+      $scope.getLocationForCoords(result, function(res) {
+        //console.log(res);
+        //console.log('location for coords');
+        $scope.destination = res;
+      });
       _map.setCenter(result);
       var marker = new google.maps.Marker({
         position: result,
-        map: _map
+        map: _map,
+        animation: google.maps.Animation.DROP
       });
     });
   };
-});
 
-function getCentroid(locations, callback) {
-  var averageX = 0;
-  var averageY = 0;
-  var i = 0;
-  locations.forEach(function(entry) {
-    getCoordsForLocation(entry, function(result) {
-      averageX += result.A;
-      averageY += result.F;
-      i++;
-      if(i == locations.length) {
-        averageX /= locations.length;
-        averageY /= locations.length;
-        callback(new google.maps.LatLng(averageX, averageY));
+  // get center point
+  $scope.getCentroid = function(locations, callback) {
+    var averageX = 0;
+    var averageY = 0;
+    var i = 0;
+    var len = locationcontrol.locations.length;
+
+    for(var x = 0; x < len; x++) {
+      $scope.getCoordsForLocation(locationcontrol.locations[x], function(result) {
+        averageX += result.lat();
+        //console.log('av: ' + averageX + ' lat: ' + result.lat());
+        averageY += result.lng();
+        i++;
+        if(i == len) {
+          averageX /= len;
+          averageY /= len;
+
+          callback(new google.maps.LatLng(averageX, averageY));
+        }
+      });
+    }
+
+
+    /*
+    locations.forEach(function(entry) {
+      getCoordsForLocation(entry, function(result) {
+        averageX += result.lat();
+        averageY += result.lng();
+        i++;
+        if(i == locations.length) {
+          averageX /= locations.length;
+          averageY /= locations.length;
+          callback(new google.maps.LatLng(averageX, averageY));
+        }
+      });
+    });
+    */
+  }
+
+  $scope.getLocationForCoords = function(location, callback) {
+    var geocoder = new google.maps.Geocoder();
+    geocoder.geocode({'location': location}, function(result, status) {
+      if(status == google.maps.GeocoderStatus.OK) {
+        //console.log(result);
+        //console.log(result[2].formatted_address);
+        callback(result[2].formatted_address);
       }
     });
-  });
-}
+  }
 
-function getCoordsForLocation(location, callback) {
-  var geocoder = new google.maps.Geocoder();
-  geocoder.geocode({'address': location}, function(results, status) {
-    var latitutde = results[0].geometry.location.A;
-    var longitutde = results[0].geometry.location.F;
-    callback(results[0].geometry.location);
-  });
-}
+  $scope.getCoordsForLocation = function(location, callback) {
+    var geocoder = new google.maps.Geocoder();
+    geocoder.geocode({'address': location}, function(results, status) {
+      callback(results[0].geometry.location);
+    });
+  }
+});
+
 
 function initialize() {
   var myLatlng = new google.maps.LatLng(-34.397, 150.644);
@@ -71,48 +119,10 @@ function initialize() {
   var geocoder = new google.maps.Geocoder();
   var address = 'Lansing, Michigan';
   geocoder.geocode({'address': address}, function(results, status) {
-    var latitutde = results[0].geometry.location.A;
-    var longitutde = results[0].geometry.location.F;
-    /*
-    var marker = new google.maps.Marker({
-      position: results[0].geometry.location,
-      map: _map,
-      title: 'Hello World!'
-    });
-    */
     _map.setCenter(results[0].geometry.location);
-
-
   });
-
 }
-/*
-var geocoder = new google.maps.Geocoder();
-var address = "1600 Amphitheatre Parkway, Mountain  View";
-geocoder.geocode({'address': address}, function(results, status) {
-  console.log(results);
-  console.log(status);
-  var marker = new google.maps.Marker({
-    position: results[0].geometry.location,
-    map: _map,
-    title: 'Hello World!'
-  });
-});
-*/
-/*
-geocoder.getLatLng(address, function(point) {
-  var latitude = point.y;
-  var longitude = point.x;
 
-  console.log("geocoder get lat and lang: " + latitude + " and this: " + longitude);
-         // do something with the lat lng
-});
-*/
-
-
-/*
-$(".done-button").click(function() {
-    var location = $('.input-box').val();
-    console.log(location);
-});
-*/
+//$(document).ready(function() {
+  $("#test").css("background-color", "red");
+//});

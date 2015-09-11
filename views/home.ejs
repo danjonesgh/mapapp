@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Page</title>
+    <title>Map</title>
     <!-- Bootstrap -->
     <link href="/bootstrap/css/bootstrap.min.css" rel="stylesheet">
     <link href="/css/main.css" rel="stylesheet">
@@ -14,37 +14,68 @@
       <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
       <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="/js/jquery.min.js"></script>
     <script src="/js/angular.min.js"></script>
     <script type="text/javascript"
     src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDsbXZLQt0BCKZw-_-G82f6lBC1ucVRFMo">
     </script>
     <script src="/js/main.js"></script>
+    <style>
+    #test {
+      background-color: yellow;
+    }
+    .test {
+      background-color: blue;
+    }
+    </style>
   </head>
   <body>
     <div class="container">
       <div class="starter-template">
-        <h1>Center</h1>
-        <p class="lead">
-          Use this document as a way to quickly start any new project.<br>
-          All you get is this text and a mostly barebones HTML document.
-        </p>
-        <div class="mid" ng-controller="LocationController as locationcontrol">
-          <form ng-submit="locationcontrol.submitLocation()">
-            <input ng-model="locationcontrol.address" type="text" class="form-control input-box" placeholder="Enter a location">
-            <ul>
-              <li ng-repeat="loc in locationcontrol.locations">
-                {{loc}}
-              </li>
-            </ul>
-            <input ng-click="locationcontrol.addLocation()" class="btn btn-default add-location" type="button" value="Add Another Location">
-            <input class="btn btn-default done-button" type="submit" value="Map it">
-          </form>
+        <div class="row">
+          <div class="col-md-2">
+
+            <p class="lead">
+              Add a location, one by one.<br/>
+              Map it to find the center.
+            </p>
+            <div class="mid" ng-controller="LocationController as locationcontrol">
+              <form ng-submit="submitLocation()">
+                <input ng-model="locationcontrol.address" type="text" class="form-control input-box" placeholder="Enter a location">
+                <ul class="places-list">
+                  <li ng-repeat="loc in locationcontrol.locations" class="reveal">
+                    {{loc}}
+                  </li>
+                </ul>
+                <input ng-click="locationcontrol.addLocation()" class="btn btn-default add-location" type="button" value="Add Another Location">
+                <input class="btn btn-default done-button" type="submit" value="Map it">
+                <p class="destination">{{ destination }}</p>
+              </form>
+            </div>
+          </div>
+
+          <div class="col-md-10">
+
+            <div id="map-canvas"></div>
+
+          </div>
+
         </div>
-        <div id="map-canvas"></div>
+        <div ng-show="bool" class="zfade">
+  Show and hide me
+</div>
+<button ng-click="bool=true">Toggle</button>
+
+        <!--
+        <div class="test" id="test">
+          test
+        </div>
+        -->
+
       </div>
     </div>
-    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-    <script src="/js/jquery.min.js"></script>
     <!-- Include all compiled plugins (below), or include individual files as needed -->
     <script src="/bootstrap/js/bootstrap.min.js"></script>
   </body>
