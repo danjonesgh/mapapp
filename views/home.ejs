@@ -18,6 +18,7 @@
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script src="/js/jquery.min.js"></script>
     <script src="/js/angular.min.js"></script>
+    <script src="/js/angular-animate.min.js"></script>
     <script type="text/javascript"
     src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDsbXZLQt0BCKZw-_-G82f6lBC1ucVRFMo">
     </script>
@@ -32,7 +33,7 @@
     </style>
   </head>
   <body>
-    <div class="container">
+    <div class="container-fluid">
       <div class="starter-template">
         <div class="row">
           <div class="col-md-2">
@@ -41,32 +42,45 @@
               Add a location, one by one.<br/>
               Map it to find the center.
             </p>
-            <div class="mid" ng-controller="LocationController as locationcontrol">
+            <div class="mid" ng-controller="LocationController">
+
               <form ng-submit="submitLocation()">
-                <input ng-model="locationcontrol.address" type="text" class="form-control input-box" placeholder="Enter a location">
-                <ul class="places-list">
-                  <li ng-repeat="loc in locationcontrol.locations" class="reveal">
+                <input ng-model="address" type="text" class="form-control input-box" placeholder="Enter a location">
+
+                <ol class="places-list reveal-animation">
+                  <li ng-repeat="loc in locations" class="reveal">
                     {{loc}}
                   </li>
-                </ul>
-                <input ng-click="locationcontrol.addLocation()" class="btn btn-default add-location" type="button" value="Add Another Location">
-                <input class="btn btn-default done-button" type="submit" value="Map it">
-                <p class="destination">{{ destination }}</p>
+                </ol>
+
+                <input ng-click="addLocation()" class="btn btn-primary add-location" type="button" value="Add Location">
+
+
+                    <input class="btn btn-success done-button" type="submit" value="Map it">                
+
+                    <button ng-click="clear()" type="button" class="btn btn-danger clear-button">Clear</button>
+             
+
+
+                <div class="destination-container">
+                  <p class="destination">{{ destination }}</p>
+                </div>
               </form>
+
             </div>
           </div>
 
           <div class="col-md-10">
-
             <div id="map-canvas"></div>
-
           </div>
-
         </div>
+
+        <!--
         <div ng-show="bool" class="zfade">
-  Show and hide me
-</div>
-<button ng-click="bool=true">Toggle</button>
+          Show and hide me
+        </div>
+        <button ng-click="bool=true">Toggle</button>
+        -->
 
         <!--
         <div class="test" id="test">

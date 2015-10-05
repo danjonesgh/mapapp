@@ -1,66 +1,104 @@
 google.maps.event.addDomListener(window, 'load', initialize);
 var _map;
-var loc = angular.module('locationApp', []);
+var loc = angular.module('locationApp', ['ngAnimate']);
 
 loc.controller('LocationController', function($scope) {
-  var locationcontrol = this;
 
-  locationcontrol.locations = [];
-  locationcontrol.coordLocations = [];
-  $scope.destination = 'test';
+  $scope.markers = [];
+  $scope.locations = [];
+  $scope.coordLocations = [];
+  $scope.destination = '';
+  $scope.locationTitle = '';
 
+  //
+  //
   // add a single location
-  locationcontrol.addLocation = function() {
-    console.log('add location');
-    locationcontrol.locations.push(locationcontrol.address);
-    //$scope.destination = locationcontrol.address;
-    $scope.getCoordsForLocation(locationcontrol.address, function(result) {
-      //console.log('res: ' + result);
-      var marker = new google.maps.Marker({
-        position: result,
-        map: _map,
-        animation: google.maps.Animation.DROP/*,
-        icon: '/images/greendot.png'*/
+  //
+  //
+  $scope.addLocation = function() {
+    if($scope.address != '' 
+      && $scope.address != undefined 
+      && $scope.address != null) {
+
+      if(!$(".input-box").next().hasClass("location-title")) {
+        $(".input-box").after('<h1 class="location-title">Locations</h1>');
+      }
+
+      $scope.locations.push($scope.address);
+
+      $scope.getCoordsForLocation($scope.address, function(coords) {
+        _map.setCenter(coords);
+        var marker = new google.maps.Marker({
+          position: coords,
+          map: _map,
+          animation: google.maps.Animation.DROP //,
+         // icon: '/images/greendot.png'
+        });
+        $scope.markers.push(marker);
       });
-    });
-    locationcontrol.address = '';
+      $scope.address = '';
+    }
   }
 
+  //
+  //
   // submitted final result, get middle 
+  //
+  //
   $scope.submitLocation = function() {
-    console.log('submit');
-    //$scope.destination = "okok";
-    $scope.getCentroid(locationcontrol.locations, function(result) {
-      //console.log('in here');
-      //$scope.destination = 'result';
-      //$(".destination").html("yesyesyes");
-      console.log(result);
-      $scope.getLocationForCoords(result, function(res) {
-        //console.log(res);
-        //console.log('location for coords');
-        $scope.destination = res;
+    $scope.getCentroid($scope.locations, function(center) {
+      $scope.getLocationForCoords(center, function(location) {
+        $(".destination").before('<h1 class="destination-title">Destination</h1>');
+        $scope.$apply($scope.destination = location);
       });
-      _map.setCenter(result);
+    
+      _map.setCenter(center);      
       var marker = new google.maps.Marker({
-        position: result,
+        position: center,
         map: _map,
         animation: google.maps.Animation.DROP
       });
+      $scope.markers.push(marker);
     });
   };
 
+  //
+  //
+  // clear locations
+  //
+  //
+  $scope.clear = function() {
+    $(".location-title").remove();
+    $(".destination-title").remove();
+    $scope.locations.length = 0;
+    $scope.destination = '';
+    for(var i = 0; i < $scope.markers.length; i++) {
+      $scope.markers[i].setMap(null);
+    }
+    $scope.markers.length = 0;
+
+    var address = 'Lansing, Michigan';
+    $scope.getCoordsForLocation(address, function(coords) {
+      _map.setCenter(coords);
+    });
+  }
+
+  //
+  //
   // get center point
+  //
+  //
   $scope.getCentroid = function(locations, callback) {
     var averageX = 0;
     var averageY = 0;
     var i = 0;
-    var len = locationcontrol.locations.length;
+    var len = $scope.locations.length;
 
     for(var x = 0; x < len; x++) {
-      $scope.getCoordsForLocation(locationcontrol.locations[x], function(result) {
-        averageX += result.lat();
+      $scope.getCoordsForLocation($scope.locations[x], function(coords) {
+        averageX += coords.lat();
         //console.log('av: ' + averageX + ' lat: ' + result.lat());
-        averageY += result.lng();
+        averageY += coords.lng();
         i++;
         if(i == len) {
           averageX /= len;
@@ -70,7 +108,6 @@ loc.controller('LocationController', function($scope) {
         }
       });
     }
-
 
     /*
     locations.forEach(function(entry) {
@@ -88,6 +125,11 @@ loc.controller('LocationController', function($scope) {
     */
   }
 
+  //
+  //
+  //
+  //
+  //
   $scope.getLocationForCoords = function(location, callback) {
     var geocoder = new google.maps.Geocoder();
     geocoder.geocode({'location': location}, function(result, status) {
@@ -99,6 +141,11 @@ loc.controller('LocationController', function($scope) {
     });
   }
 
+  //
+  //
+  //
+  //
+  //
   $scope.getCoordsForLocation = function(location, callback) {
     var geocoder = new google.maps.Geocoder();
     geocoder.geocode({'address': location}, function(results, status) {
@@ -107,7 +154,11 @@ loc.controller('LocationController', function($scope) {
   }
 });
 
-
+//
+//
+// init
+//
+//
 function initialize() {
   var myLatlng = new google.maps.LatLng(-34.397, 150.644);
   var mapOptions = {

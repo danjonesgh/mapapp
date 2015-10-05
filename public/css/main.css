@@ -16,14 +16,23 @@
   height: 600px;
 }
 
-.add-location {
-  margin-top: 10px;
-}
-.done-button {
+.add-location,
+.done-button,
+.clear-button {
   margin-top: 15px;
 }
 
+.destination {
+  margin-top: 15px;
+}
+
+.btn:hover {
+  transform: scale(1.1);
+  transition: .2s ease-in-out;
+}
+
 ul {
+  padding: 0px;
   list-style-type: none;
 }
 
@@ -33,9 +42,9 @@ li {
 }
 */
 
-.reveal-animation.ng-enter {
- -webkit-transition: 1s linear all; /* Safari/Chrome */
- transition: 1s linear all; /* All other modern browsers and IE10+ */
+.ng-enter {
+ -webkit-transition: 0.5s linear all; /* Safari/Chrome */
+ transition: 0.5s linear all; /* All other modern browsers and IE10+ */
 
  /* The animation preparation code */
  opacity: 0;
@@ -46,7 +55,7 @@ li {
  classes together to avoid any CSS-specificity
  conflicts
 */
-.reveal-animation.ng-enter.ng-enter-active {
+.ng-enter.ng-enter-active {
  /* The animation code itself */
  opacity: 1;
 }
